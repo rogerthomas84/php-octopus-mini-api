@@ -1,0 +1,37 @@
+name: CI
+on: [push]
+
+jobs:
+  unit-test:
+    name: Unit testing
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: tests-group
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: 8.3
+          php_extensions: "xdebug calendar sockets"
+
+      - name: Run unit tests
+        uses: php-actions/phpunit@v3
+        env:
+          XDEBUG_MODE: coverage
+          OCTOPUS_EMAIL: '${{ secrets.OCTOPUS_EMAIL }}'
+          OCTOPUS_PASSWORD: '${{ secrets.OCTOPUS_PASSWORD }}'
+          OCTOPUS_ACCOUNT_NUMBER: '${{ secrets.OCTOPUS_ACCOUNT_NUMBER }}'
+        with:
+          version: 9.6
+          php_version: 8.3
+          php_extensions: "xdebug calendar sockets"
+          args: "-d date.timezone=UTC"
+          configuration: phpunit.xml
+          testsuite: TestSuite
+          bootstrap: tests/bootstrap.php

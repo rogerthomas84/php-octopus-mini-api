@@ -1,0 +1,26 @@
+{
+  "name": "rogerthomas84/php-octopus-mini-api",
+  "description": "A working example of getting live consumption data from the Octopus API using PHP",
+  "keywords": ["library", "php", "octopusapi"],
+  "homepage": "https://github.com/rogerthomas84/php-octopus-mini-api",
+  "license": "mit",
+  "authors": [
+    {
+      "name": "Roger Thomas",
+      "email": "rogere84@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.3",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "autoload": {
+    "psr-4": { "Rt\\OctopusAPI\\": "src/" }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload-dev": {
+    "psr-4": { "RtTests\\OctopusAPITests\\": "tests/" }
+  }
+}
