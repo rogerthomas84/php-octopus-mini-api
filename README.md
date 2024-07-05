@@ -1,6 +1,8 @@
 Octopus Mini API library
 ====
 
+![CI](https://github.com/rogerthomas84/php-octopus-mini-api/actions/workflows/ci.yml/badge.svg?branch=master)
+
 ### Description...
 
 This is a simple library, primarily to serve as a documentation of how to retrieve the live consumption data from the
