@@ -27,6 +27,9 @@ jobs:
           OCTOPUS_EMAIL: '${{ secrets.OCTOPUS_EMAIL }}'
           OCTOPUS_PASSWORD: '${{ secrets.OCTOPUS_PASSWORD }}'
           OCTOPUS_ACCOUNT_NUMBER: '${{ secrets.OCTOPUS_ACCOUNT_NUMBER }}'
+          OCTOPUS_API_KEY: '${{ secrets.OCTOPUS_API_KEY }}'
+          OCTOPUS_MPAN: '${{ secrets.OCTOPUS_MPAN }}'
+          OCTOPUS_SERIAL_NUMBER: '${{ secrets.OCTOPUS_SERIAL_NUMBER }}'
         with:
           version: 9.6
           php_version: 8.3
