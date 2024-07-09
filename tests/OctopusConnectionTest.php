@@ -2,6 +2,7 @@
 
 namespace RtTests\OctopusAPITests;
 
+use District5\Date\Date;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
@@ -32,6 +33,28 @@ class OctopusConnectionTest extends TestAbstract
         $meterDeviceId = $connection->getMeterDeviceId();
         $this->assertNotEmpty($meterDeviceId);
         $this->assertIsString($meterDeviceId);
+    }
+
+    /**
+     * @return void
+     * @throws GuzzleException
+     */
+    public function testGetHalfHourlyReadings(): void
+    {
+        $connection = $this->getApi();
+        $dateFrom = Date::modify(Date::nowUtc())->minus()->hours(48);
+        $dateTo = Date::nowUtc();
+        $readings = $connection->getHalfHourReadings($dateFrom, $dateTo);
+        $this->assertIsArray($readings);
+        $this->assertNotEmpty($readings);
+        $this->assertIsArray($readings[0]);
+        foreach ($readings as $reading) {
+            $this->assertIsArray($reading);
+            $this->assertArrayHasKey('consumption', $reading);
+            $this->assertArrayHasKey('interval_start', $reading);
+            $this->assertArrayHasKey('interval_end', $reading);
+            $this->assertIsNumeric($reading['consumption']);
+        }
     }
 
     /**

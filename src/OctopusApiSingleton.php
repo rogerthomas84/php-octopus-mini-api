@@ -2,7 +2,11 @@
 
 namespace Rt\OctopusAPI;
 
+use DateTime;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
+use Rt\OctopusAPI\Dto\AccountDto;
 
 /**
  * @class OctopusApiSingleton
@@ -19,6 +23,21 @@ class OctopusApiSingleton
      * @var string|null
      */
     protected string|null $email = null;
+
+    /**
+     * @var string|null
+     */
+    protected string|null $mpan = null;
+
+    /**
+     * @var string|null
+     */
+    protected string|null $serialNumber = null;
+
+    /**
+     * @var string|null
+     */
+    protected string|null $apiKey = null;
 
     /**
      * @var string|null
@@ -84,6 +103,36 @@ class OctopusApiSingleton
     }
 
     /**
+     * @param string $mpan
+     * @return OctopusApiSingleton
+     */
+    public function setMpan(string $mpan): OctopusApiSingleton
+    {
+        $this->mpan = $mpan;
+        return $this;
+    }
+
+    /**
+     * @param string $serialNumber
+     * @return OctopusApiSingleton
+     */
+    public function setSerialNumber(string $serialNumber): OctopusApiSingleton
+    {
+        $this->serialNumber = $serialNumber;
+        return $this;
+    }
+
+    /**
+     * @param string $apiKey
+     * @return OctopusApiSingleton
+     */
+    public function setApiKey(string $apiKey): OctopusApiSingleton
+    {
+        $this->apiKey = $apiKey;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getEmail(): string
@@ -108,6 +157,30 @@ class OctopusApiSingleton
     }
 
     /**
+     * @return string
+     */
+    public function getMpan(): string
+    {
+        return $this->mpan;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSerialNumber(): string
+    {
+        return $this->serialNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
+    /**
      * @throws GuzzleException
      */
     public function getOctopusGraphQL(): OctopusGraphQL
@@ -122,5 +195,66 @@ class OctopusApiSingleton
         );
 
         return $this->graphql;
+    }
+
+    /**
+     * @param DateTime $startDate
+     * @param DateTime $endDate
+     * @param int $pageSize
+     * @param string $orderBy
+     * @return array[array]
+     * @throws GuzzleException
+     */
+    public function getHalfHourReadings(DateTime $startDate, DateTime $endDate, int $pageSize = 25000, string $orderBy = '-period'): array
+    {
+        $url = 'https://api.octopus.energy/v1/electricity-meter-points/' . $this->getMpan() . '/meters/' . $this->getSerialNumber() . '/consumption/';
+
+        $client = new Client();
+        $response = $client->get(
+            $url,
+            [
+                'auth' => [$this->getApiKey(), ''],
+                'headers' => [
+                    'auth' => [$this->getApiKey(), ''],
+                    'Content-Type' => 'application/json',
+                ],
+                'query' => [
+                    'period_from' => $startDate->format('Y-m-d\TH:i:s\Z'),
+                    'period_to' => $endDate->format('Y-m-d\TH:i:s\Z'),
+                    'page_size' => $pageSize,
+                    'order_by' => $orderBy
+                ],
+            ]
+        );
+
+        $decoded = json_decode($response->getBody()->getContents(), true);
+        return $decoded['results'];
+    }
+
+    /**
+     * @return AccountDto
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    public function getAccount(): AccountDto
+    {
+
+        $url = 'https://api.octopus.energy/v1/accounts/' . $this->getAccountNumber(). '/';
+
+        $client = new Client();
+        $response = $client->get(
+            $url,
+            [
+                'auth' => [$this->getApiKey(), ''],
+                'headers' => [
+                    'auth' => [$this->getApiKey(), ''],
+                    'Content-Type' => 'application/json',
+                ]
+            ]
+        );
+
+        $decoded = json_decode($response->getBody()->getContents(), true);
+
+        return AccountDto::inflate($decoded);
     }
 }

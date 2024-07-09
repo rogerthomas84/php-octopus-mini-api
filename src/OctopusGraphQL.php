@@ -85,7 +85,7 @@ class OctopusGraphQL
      */
     public function getToken(): string
     {
-        if (isset($this->token)) {
+        if (isset($this->token) && $this->token !== null) {
             return $this->token;
         }
 
@@ -148,7 +148,7 @@ class OctopusGraphQL
      * @return string
      * @throws GuzzleException
      */
-    public function getMeterDeviceId()
+    public function getMeterDeviceId(): string
     {
         if (isset($this->meterDeviceId)) {
             return $this->meterDeviceId;

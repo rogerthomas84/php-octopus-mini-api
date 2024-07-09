@@ -19,6 +19,11 @@ class TestAbstract extends TestCase
     private OctopusGraphQL|null $connection = null;
 
     /**
+     * @var OctopusApiSingleton|null
+     */
+    private OctopusApiSingleton|null $api = null;
+
+    /**
      * @return string
      */
     protected function getEmail(): string
@@ -43,6 +48,30 @@ class TestAbstract extends TestCase
     }
 
     /**
+     * @return string
+     */
+    protected function getApiKey(): string
+    {
+        return getenv('OCTOPUS_API_KEY');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getMpan(): string
+    {
+        return getenv('OCTOPUS_MPAN');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSerialNumber(): string
+    {
+        return getenv('OCTOPUS_SERIAL_NUMBER');
+    }
+
+    /**
      * @return OctopusGraphQL
      * @throws GuzzleException
      */
@@ -52,14 +81,33 @@ class TestAbstract extends TestCase
             return $this->connection;
         }
 
-        $this->connection = OctopusApiSingleton::getInstance()->setEmail(
+        $this->api = OctopusApiSingleton::getInstance()->setEmail(
             $this->getEmail()
         )->setPassword(
             $this->getPassword()
         )->setAccountNumber(
             $this->getAccountNumber()
-        )->getOctopusGraphQL();
+        )->setApiKey(
+            $this->getApiKey()
+        )->setMpan(
+            $this->getMpan()
+        )->setSerialNumber(
+            $this->getSerialNumber()
+        );
+        $this->connection = $this->api->getOctopusGraphQL();
 
         return $this->connection;
+    }
+
+    /**
+     * @return OctopusApiSingleton
+     * @throws GuzzleException
+     */
+    protected function getApi(): OctopusApiSingleton
+    {
+        if ($this->api === null) {
+            $this->getConnection();
+        }
+        return $this->api;
     }
 }
