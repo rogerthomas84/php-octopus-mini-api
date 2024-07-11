@@ -8,7 +8,7 @@ use Exception;
  * Class ElectricityMeterPointDto
  * @package Rt\OctopusAPI\Dto
  */
-class ElectricityMeterPointDto
+class ElectricityMeterPointDto implements InflatableDtoInterface
 {
     /**
      * @var string

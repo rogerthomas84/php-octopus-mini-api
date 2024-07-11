@@ -4,27 +4,20 @@ namespace Rt\OctopusAPI\Dto;
 
 use DateTime;
 use Exception;
+use Rt\OctopusAPI\Dto\Traits\ValidDatesTrait;
 
 /**
  * Class AgreementDto
  * @package Rt\OctopusAPI\Dto
  */
-class AgreementDto
+class AgreementDto implements InflatableDtoInterface
 {
+    use ValidDatesTrait;
+
     /**
      * @var string
      */
     protected string $tariffCode;
-
-    /**
-     * @var DateTime|null
-     */
-    protected DateTime|null $validFrom;
-
-    /**
-     * @var DateTime|null
-     */
-    protected DateTime|null $validTo;
 
     /**
      * @param array $data
@@ -35,14 +28,7 @@ class AgreementDto
     {
         $meter = new self();
         $meter->tariffCode = $data['tariff_code'];
-        $meter->validFrom = null;
-        $meter->validTo = null;
-        if (null !== $data['valid_from']) {
-            $meter->validFrom = new DateTime($data['valid_from']);
-        }
-        if (null !== $data['valid_to']) {
-            $meter->validTo = new DateTime($data['valid_to']);
-        }
+        $meter->populateValidFromValidTo($data);
 
         return $meter;
     }
@@ -56,18 +42,38 @@ class AgreementDto
     }
 
     /**
-     * @return DateTime|null
+     * @return string
      */
-    public function getValidFrom(): ?DateTime
+    public function getRegionCode(): string
     {
-        return $this->validFrom;
+        $tariffCode = $this->getTariffCode();
+        return trim(substr($tariffCode, 0, 2), '-');
     }
 
     /**
-     * @return DateTime|null
+     * @return bool
      */
-    public function getValidTo(): ?DateTime
+    public function isSingleRegister(): bool
     {
-        return $this->validTo;
+        $tariffCode = $this->getTariffCode();
+        return str_starts_with($tariffCode, 'E-1R-');
+    }
+
+    /**
+     * @return bool
+     * @see self::isEconomySeven()
+     */
+    public function isDualRegister(): bool
+    {
+        return $this->isEconomySeven();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEconomySeven(): bool
+    {
+        $tariffCode = $this->getTariffCode();
+        return str_starts_with($tariffCode, 'E-2R-');
     }
 }

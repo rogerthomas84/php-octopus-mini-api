@@ -9,7 +9,7 @@ use Exception;
  * Class PropertyDto
  * @package Rt\OctopusAPI\Dto
  */
-class PropertyDto
+class PropertyDto implements InflatableDtoInterface
 {
     /**
      * @var int

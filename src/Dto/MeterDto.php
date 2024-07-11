@@ -6,7 +6,7 @@ namespace Rt\OctopusAPI\Dto;
  * Class MeterDto
  * @package Rt\OctopusAPI\Dto
  */
-class MeterDto
+class MeterDto implements InflatableDtoInterface
 {
     /**
      * @var string

@@ -44,7 +44,7 @@ class OctopusConnectionTest extends TestAbstract
         $connection = $this->getApi();
         $dateFrom = Date::modify(Date::nowUtc())->minus()->hours(48);
         $dateTo = Date::nowUtc();
-        $readings = $connection->getHalfHourReadings($dateFrom, $dateTo);
+        $readings = $connection->getElectricityService()->getHalfHourReadings($dateFrom, $dateTo);
         $this->assertIsArray($readings);
         $this->assertNotEmpty($readings);
         $this->assertIsArray($readings[0]);

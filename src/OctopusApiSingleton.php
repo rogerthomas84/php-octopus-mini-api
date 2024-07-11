@@ -7,6 +7,8 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Rt\OctopusAPI\Dto\AccountDto;
+use Rt\OctopusAPI\Dto\StandingChargeDto;
+use Rt\OctopusAPI\Services\ElectricityService;
 
 /**
  * @class OctopusApiSingleton
@@ -53,6 +55,11 @@ class OctopusApiSingleton
      * @return string
      */
     protected OctopusGraphQL|null $graphql = null;
+
+    /**
+     * @var ElectricityService|null
+     */
+    private ElectricityService|null $electricityService = null;
 
     /**
      * OctopusApiSingleton constructor. Protected to prevent instantiation
@@ -197,38 +204,13 @@ class OctopusApiSingleton
         return $this->graphql;
     }
 
-    /**
-     * @param DateTime $startDate
-     * @param DateTime $endDate
-     * @param int $pageSize
-     * @param string $orderBy
-     * @return array[array]
-     * @throws GuzzleException
-     */
-    public function getHalfHourReadings(DateTime $startDate, DateTime $endDate, int $pageSize = 25000, string $orderBy = '-period'): array
+    public function getElectricityService(): ElectricityService
     {
-        $url = 'https://api.octopus.energy/v1/electricity-meter-points/' . $this->getMpan() . '/meters/' . $this->getSerialNumber() . '/consumption/';
+        if (null === $this->electricityService) {
+            $this->electricityService = new ElectricityService($this);
+        }
 
-        $client = new Client();
-        $response = $client->get(
-            $url,
-            [
-                'auth' => [$this->getApiKey(), ''],
-                'headers' => [
-                    'auth' => [$this->getApiKey(), ''],
-                    'Content-Type' => 'application/json',
-                ],
-                'query' => [
-                    'period_from' => $startDate->format('Y-m-d\TH:i:s\Z'),
-                    'period_to' => $endDate->format('Y-m-d\TH:i:s\Z'),
-                    'page_size' => $pageSize,
-                    'order_by' => $orderBy
-                ],
-            ]
-        );
-
-        $decoded = json_decode($response->getBody()->getContents(), true);
-        return $decoded['results'];
+        return $this->electricityService;
     }
 
     /**
@@ -238,7 +220,6 @@ class OctopusApiSingleton
      */
     public function getAccount(): AccountDto
     {
-
         $url = 'https://api.octopus.energy/v1/accounts/' . $this->getAccountNumber(). '/';
 
         $client = new Client();

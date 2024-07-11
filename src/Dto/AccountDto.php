@@ -8,7 +8,7 @@ use Exception;
  * Class AccountDto
  * @package Rt\OctopusAPI\Dto
  */
-class AccountDto
+class AccountDto implements InflatableDtoInterface
 {
     /**
      * @var string

@@ -14,6 +14,13 @@ In order to retrieve the live consumption data, you must have an Octopus Mini de
 an account with Octopus Energy. If you have an Octopus account, but don't have a Mini device, you can request a free
 one from Octopus Energy [here](https://octopus.typeform.com/to/B5ifg5rQ).
 
+Much of this library has been written using the documentation available from Octopus:
+
+ * https://developer.octopus.energy/rest/
+ * https://developer.octopus.energy/rest/reference
+ * https://developer.octopus.energy/rest/guides/endpoints
+ * https://developer.octopus.energy/graphql/guides
+
 ### Usage...
 
 ```
@@ -56,8 +63,33 @@ $myMeter = $myProperty->getElectricityMeterPoints()[0];
 echo 'The first electricity meter point on your property is ' . $myMeter->getMpan() . "\n";
 
 $myAgreement = $myMeter->getAgreements()[0];
+$myTariffCode = $myAgreement->getTariffCode();
 echo 'My tariff code is ' . $myAgreement->getTariffCode() . "\n";
 
+
+$dateFrom = DateTime::createFromFormat('Y-m-d', '2021-01-01');
+$dateTo = DateTime::createFromFormat('Y-m-d', '2021-01-02');
+
+$consumptionData = $apiInstance->getElectricityService()->getHalfHourReadings(
+    $dateFrom,
+    $dateTo,
+    25000, // limit per page
+    '-period' // or 'period', used for sorting
+);
+
+$standingCharges = $apiInstance->getElectricityService()->getStandingCharges(
+    $myTariffCode,
+    $dateFrom,
+    $dateTo,
+    25000, // limit per page
+);
+
+$unitRates = $apiInstance->getElectricityService()->getStandardUnitRates(
+    $myTariffCode,
+    $dateFrom,
+    $dateTo,
+    25000, // limit per page
+);
 ```
 
 ### Testing...
