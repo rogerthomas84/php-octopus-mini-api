@@ -9,14 +9,14 @@ namespace Rt\OctopusAPI\Dto\Traits;
 trait PaymentMethodTrait
 {
     /**
-     * @var string
+     * @var string|null
      */
-    protected string $paymentMethod;
+    protected ?string $paymentMethod;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentMethod(): string
+    public function getPaymentMethod(): string|null
     {
         return $this->paymentMethod;
     }

@@ -13,7 +13,7 @@
   "require": {
     "php": ">=8.3",
     "guzzlehttp/guzzle": "^7.0",
-    "district5/date": "^2.0"
+    "district5/date": "*"
   },
   "autoload": {
     "psr-4": { "Rt\\OctopusAPI\\": "src/" }
